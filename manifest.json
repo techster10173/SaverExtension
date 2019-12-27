@@ -1,0 +1,15 @@
+{
+  "name": "TabSaver",
+  "version": "1.0",
+  "description": "Save existing tabs in a state",
+  "manifest_version": 2,
+  "browser_action":{
+    "default_popup": "UserInterface.html"
+  },
+  "permissions": [
+    "tabs",
+    "https://*/",
+    "storage"
+  ],
+  "content_security_policy": "script-src 'self' https://kit.fontawesome.com/; object-src 'self'"
+}
