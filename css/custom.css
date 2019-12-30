@@ -15,3 +15,6 @@ footer{
     text-align: center;
     font-size: 5px;
 }
+.card{
+    animation-delay: 0.25s;
+}

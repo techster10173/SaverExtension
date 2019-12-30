@@ -41,7 +41,7 @@ function displayData() {
         if(keys[i].includes("stateData")) {
             var card = document.createElement("div");
             var cardHeader = document.createElement("div");
-            card.className = "card";
+            card.className = "card animated bounceIn";
             cardHeader.className = "card-header";
             var header = document.createElement("h2");
             header.className = "mb-0";
@@ -55,7 +55,7 @@ function displayData() {
             };
 
             var key = document.createElement("button");
-            key.className = "btn float-right";
+            key.className = "btn float-right btn-secondary";
             key.setAttribute("data-toggle", "collapse");
             key.setAttribute("data-target", "#" + name);
 
