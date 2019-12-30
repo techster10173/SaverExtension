@@ -130,11 +130,7 @@ function getAllOpenWindows(winData) {
 function saveData(currentTabs, stateName) {
     currentTabs = JSON.stringify(currentTabs);
     window.localStorage.setItem(stateName, currentTabs);
-    var paras = document.getElementsByClassName("card");
-    while(paras[0]){
-        paras[0].parentNode.removeChild(paras[0]);
-    }
-    displayData();
+    reloadData();
 }
 
 function openTabs(key) {
@@ -153,6 +149,15 @@ function deleteState(id) {
     window.localStorage.removeItem(id);
     var name = id.substring(0, id.indexOf("stateData"));
     window.localStorage.removeItem(name);
+    reloadData();
+}
+
+function reloadData() {
+    var paras = document.getElementsByClassName("card");
+    while (paras[0]) {
+        paras[0].parentNode.removeChild(paras[0]);
+    }
+    displayData();
 }
 
 // chrome.windows.onFocusChanged.addListener(function(id){
