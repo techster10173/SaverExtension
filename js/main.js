@@ -11,22 +11,35 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function saveState() {
-    var stateName = document.getElementById("stateName").value + "stateData";
-    saveData(tabs, stateName);
-    saveSession(document.getElementById("stateName").value);
+    if (!(document.getElementById('stateName').value === "")) {
+        var stateName = document.getElementById("stateName").value + "stateData";
+        saveData(tabs, stateName);
+        saveSession(document.getElementById("stateName").value);
+    }
 }
 
 function saveSession(stateName) {
     chrome.windows.getCurrent(function (w) {
-        window.localStorage.setItem(stateName,w.id);
+        var storedSessions;
+        if (JSON.parse(localStorage.getItem(stateName)) === null) {
+            storedSessions = [];
+        } else {
+            storedSessions = JSON.parse(localStorage.getItem(stateName));
+        }
+        storedSessions.push(w.id);
+        window.localStorage.setItem(stateName, JSON.stringify(storedSessions));
     });
 }
 
 function displayState(name){
     chrome.windows.getCurrent(function (win) {
-        if(parseInt(window.localStorage.getItem(name)) === win.id){
-            document.getElementById("currentState").innerText = "Current State: " + name;
-            document.getElementById("stateName").value = name;
+        var storedSessions = JSON.parse(localStorage.getItem(name));
+        for (var i = 0; i < storedSessions.length; i++) {
+            if (parseInt(storedSessions[i]) === win.id) {
+                document.getElementById("currentState").innerText = "Current State: " + name;
+                document.getElementById("stateName").value = name;
+                break;
+            }
         }
     });
 }
@@ -34,10 +47,10 @@ function displayState(name){
 function displayData() {
     var keys = Object.keys(localStorage),
         i = keys.length;
+
     while (i--) {
         var name = keys[i].substring(0, keys[i].indexOf("stateData"));
         displayState(name);
-        // console.log(name);
         if(keys[i].includes("stateData")) {
             var card = document.createElement("div");
             var cardHeader = document.createElement("div");
@@ -58,6 +71,7 @@ function displayData() {
             key.className = "btn float-right btn-secondary";
             key.setAttribute("data-toggle", "collapse");
             key.setAttribute("data-target", "#" + name);
+            key.setAttribute("aria-label", "Open and Close Links In State");
 
             var ddicon = document.createElement("i");
             ddicon.className = "fas fa-chevron-down";
@@ -65,6 +79,7 @@ function displayData() {
             var trash = document.createElement("button");
             trash.className = "btn float-right bg-danger text-white";
             trash.setAttribute("keyName", keys[i]);
+            trash.setAttribute("aria-label", "Delete State");
             var close = document.createElement("i");
             close.className = "fas fa-trash";
             trash.appendChild(close);
@@ -95,6 +110,7 @@ function displayData() {
                 element.className = "list-group-item";
                 element.setAttribute("href", tempObject[k].url);
                 element.setAttribute("target", "_blank");
+                element.setAttribute("rel", "noopener");
                 element.appendChild(document.createTextNode(tempObject[k].title));
                 list.appendChild(element);
             }
@@ -124,7 +140,6 @@ function getAllOpenWindows(winData) {
             }
         }
     }
-    // console.log(tabs);
 }
 
 function saveData(currentTabs, stateName) {
@@ -141,7 +156,15 @@ function openTabs(key) {
         tempArray.push(tempObject[k].url);
     }
     chrome.windows.create({url: tempArray}, function (win) {
-        window.localStorage.setItem(name,win.id);
+        var storedSessions;
+        if (JSON.parse(localStorage.getItem(name)) === null) {
+            storedSessions = [];
+        } else {
+            storedSessions = JSON.parse(localStorage.getItem(name));
+        }
+        ;
+        storedSessions.push(win.id);
+        window.localStorage.setItem(name, JSON.stringify(storedSessions));
     });
 }
 
@@ -159,10 +182,3 @@ function reloadData() {
     }
     displayData();
 }
-
-// chrome.windows.onFocusChanged.addListener(function(id){
-//     var windowObject = window.localStorage.getItem("windowObject");
-//
-//     document.getElementById("currentState").innerText
-//     window.localStorage.setItem("")
-// });
