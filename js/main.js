@@ -34,11 +34,14 @@ function saveSession(stateName) {
 function displayState(name){
     chrome.windows.getCurrent(function (win) {
         var storedSessions = JSON.parse(localStorage.getItem(name));
-        for (var i = 0; i < storedSessions.length; i++) {
-            if (parseInt(storedSessions[i]) === win.id) {
-                document.getElementById("currentState").innerText = "Current State: " + name;
-                document.getElementById("stateName").value = name;
-                break;
+        if(!(storedSessions == null)) {
+            for (var i = 0; i < storedSessions.length; i++) {
+                console.log(win.id);
+                if (parseInt(storedSessions[0]) === win.id) {
+                    // console.log(name);
+                    document.getElementById("currentState").innerText = "Current State: " + name;
+                    document.getElementById("stateName").value = name;
+                }
             }
         }
     });
@@ -50,6 +53,8 @@ function displayData() {
 
     while (i--) {
         var name = keys[i].substring(0, keys[i].indexOf("stateData"));
+        var workName = name.replace(/\s+/g, '');
+
         displayState(name);
         if(keys[i].includes("stateData")) {
             var card = document.createElement("div");
@@ -70,7 +75,7 @@ function displayData() {
             var key = document.createElement("button");
             key.className = "btn float-right btn-secondary";
             key.setAttribute("data-toggle", "collapse");
-            key.setAttribute("data-target", "#" + name);
+            key.setAttribute("data-target", "#" + workName);
             key.setAttribute("aria-label", "Open and Close Links In State");
 
             var ddicon = document.createElement("i");
@@ -93,7 +98,7 @@ function displayData() {
             var details = document.createElement("div");
             details.className = "collapse";
             details.setAttribute("data-parent", "#stateList");
-            details.setAttribute("id", name);
+            details.setAttribute("id", workName);
             var detailsContainer = document.createElement("div");
             detailsContainer.className = "card-body";
             details.appendChild(detailsContainer);
